@@ -137,6 +137,60 @@ The API includes proper error handling for:
 4. Push to branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
+# FastAPI Book API
+
+## Setup
+
+1. Clone the repository:
+    ```sh
+    git clone https://github.com/yourusername/fastapi-book-api.git
+    cd fastapi-book-api
+    ```
+
+2. Create and activate a virtual environment:
+    ```sh
+    python -m venv env
+    source env/bin/activate  # On Windows use `env\Scripts\activate`
+    ```
+
+3. Install dependencies:
+    ```sh
+    pip install -r requirements.txt
+    ```
+
+4. Run the application:
+    ```sh
+    uvicorn api.main:app --reload
+    ```
+
+## Docker Setup
+
+1. Build and run the Docker containers:
+    ```sh
+    docker-compose up --build
+    ```
+
+2. Access the application at `http://localhost`.
+
+## CI/CD Pipeline
+
+This project uses GitHub Actions for CI/CD. The pipeline is defined in `.github/workflows/ci.yml` and `.github/workflows/cd.yml`.
+
+## Deployment
+
+The application is deployed using Docker and Nginx. Ensure that the server has Docker and Docker Compose installed.
+
+1. Pull the latest Docker image and run the containers:
+    ```sh
+    docker pull yourusername/fastapi-app:latest
+    docker-compose down
+    docker-compose up -d
+    ```
+
+## Collaborator Access
+
+Invite the `hng12-devbot` GitHub account as a collaborator to your repository before submitting your solution.
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -3,6 +3,7 @@ from typing import OrderedDict
 from fastapi import APIRouter, status
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException
+from typing import Dict
 
 from api.db.schemas import Book, Genre, InMemoryDB
 
@@ -38,6 +39,11 @@ db.books = {
 async def create_book(book: Book):
     db.add_book(book)
     return JSONResponse(status_code=status.HTTP_201_CREATED, content=book.model_dump())
+
+
+@router.get("/", response_model=Dict[int, Book], status_code=status.HTTP_200_OK)
+async def get_books() -> Dict[int, Book]:
+    return db.books
 
 
 @router.get("/{book_id}", response_model=Book, status_code=status.HTTP_200_OK)

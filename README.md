@@ -43,6 +43,9 @@ fastapi-book-project/
 - Pydantic
 - pytest
 - uvicorn
+- Nginx
+- Docker
+- AWS
 
 ## Installation
 
@@ -123,20 +126,13 @@ pytest
 
 ## Error Handling
 
-The API includes proper error handling for:
+The API includes proper error handling:
 
 - Non-existent books
 - Invalid book IDs
 - Invalid genre types
-- Malformed requests
+- Malformed request
 
-## Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit changes (`git commit -m 'Add AmazingFeature'`)
-4. Push to branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 # FastAPI Book API
 
@@ -175,7 +171,7 @@ The API includes proper error handling for:
 
 ## CI/CD Pipeline
 
-This project uses GitHub Actions for CI/CD. The pipeline is defined in `.github/workflows/ci.yml` and `.github/workflows/cd.yml`.
+This project uses GitHub Actions for CI/CD. The pipeline is defined in `.github/workflows/test.yml` and `.github/workflows/cd.yml`.
 
 ## Deployment
 
@@ -187,15 +183,6 @@ The application is deployed using Docker and Nginx. Ensure that the server has D
     docker-compose down
     docker-compose up -d
     ```
-
-## Collaborator Access
-
-Invite the `hng12-devbot` GitHub account as a collaborator to your repository before submitting your solution.
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Support
-
-For support, please open an issue in the GitHub repository.

@@ -47,7 +47,7 @@ jobs:
             pip install -r requirements.txt
             
             # Create a systemd service for FastAPI
-            cat <<EOT > /etc/systemd/system/fastapi.service
+            sudo bash -c 'cat <<EOT > /etc/systemd/system/fastapi.service
             [Unit]
             Description=FastAPI Application
             After=network.target
@@ -60,7 +60,7 @@ jobs:
             
             [Install]
             WantedBy=multi-user.target
-            EOT
+            EOT'
 
             sudo systemctl start fastapi
             sudo systemctl enable fastapi

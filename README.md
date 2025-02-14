@@ -130,9 +130,7 @@ The API includes proper error handling for:
 - Non-existent books
 - Invalid book IDs
 - Invalid genre types
-- Malformed requests
-
-## Contributing
+- Malformed request
 
 
 # FastAPI Book API

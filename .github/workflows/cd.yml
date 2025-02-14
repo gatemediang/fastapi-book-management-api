@@ -1,9 +1,9 @@
-name: CD Pipeline
+name: Deploy FastAPI App to AWS EC2
 
 on:
   push:
     branches:
-      - main
+      - main  # Trigger deployment when code is pushed to main
 
 jobs:
   deploy:

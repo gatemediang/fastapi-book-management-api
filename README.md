@@ -125,7 +125,7 @@ pytest
 
 ## Error Handling
 
-The API includes proper error handling for:
+The API includes proper error handling:
 
 - Non-existent books
 - Invalid book IDs

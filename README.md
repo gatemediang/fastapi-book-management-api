@@ -89,7 +89,8 @@ uvicorn main:app
 - `PUT /api/v1/books/{book_id}` - Update a book
 - `DELETE /api/v1/books/{book_id}` - Delete a book
 
-### Health Check
+### Contributor
+https://github.com/apps/hng12-bot
 
 - `GET /healthcheck` - Check API status
 

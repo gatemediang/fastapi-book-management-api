@@ -36,4 +36,4 @@ jobs:
           docker-compose down
           docker-compose up -d
           EOF
-      shell: bash
+        shell: bash

@@ -45,7 +45,6 @@ fastapi-book-project/
 - uvicorn
 - Nginx
 - Docker
-- AWS
 
 ## Installation
 

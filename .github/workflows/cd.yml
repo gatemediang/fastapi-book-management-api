@@ -3,7 +3,7 @@ name: CD Pipeline
 on:
   push:
     branches:
-      - main  # Trigger deployment when code is pushed to main
+      - main
 
 jobs:
   deploy:

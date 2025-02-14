@@ -28,10 +28,14 @@ jobs:
           docker push ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
 
       - name: Deploy to AWS
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.AWS_SSH_KEY }}
+          AWS_USER: ${{ secrets.AWS_USER }}
+          AWS_IP: ${{ secrets.AWS_IP }}
         run: |
-          echo "${{ secrets.AWS_SSH_KEY }}" > key.pem
+          echo "$SSH_PRIVATE_KEY" > key.pem
           chmod 600 key.pem
-          ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_IP }} << 'EOF'
+          ssh -i key.pem -o StrictHostKeyChecking=no $AWS_USER@$AWS_IP << 'EOF'
           docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
           docker-compose down
           docker-compose up -d

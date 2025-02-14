@@ -29,8 +29,11 @@ jobs:
 
       - name: Deploy to AWS
         run: |
-          ssh -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_IP }} << 'EOF'
+          echo "${{ secrets.AWS_SSH_KEY }}" > key.pem
+          chmod 600 key.pem
+          ssh -i key.pem -o StrictHostKeyChecking=no ${{ secrets.AWS_USER }}@${{ secrets.AWS_IP }} << 'EOF'
           docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
           docker-compose down
           docker-compose up -d
           EOF
+      shell: bash

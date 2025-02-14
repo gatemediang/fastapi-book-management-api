@@ -1,58 +1,66 @@
 name: Deploy FastAPI App to AWS EC2
 
 on:
-  push:
+  pull_request:
     branches:
-      - main  # Trigger deployment when code is pushed to main
+      - main
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up SSH key from GitHub Secrets
       - name: Set up SSH Key (ED25519)
         run: |
-          # Create .ssh directory if it doesn't exist
           mkdir -p ~/.ssh
-          
-          # Store the private key from GitHub Secrets as a file in ~/.ssh
           echo "${{ secrets.AWS_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
-          
-          # Change permissions to ensure the private key is secure
           chmod 600 ~/.ssh/id_ed25519
-          
-          # Add the EC2 instance to known_hosts for SSH fingerprint verification
           ssh-keyscan -H ${{ secrets.AWS_EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
 
-      # Step 3: Log in to Docker Hub
-      - name: Log in to Docker Hub
-        run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-
-      # Step 4: Pull the latest Docker image
-      - name: Pull latest Docker image
-        run: docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi-app
-
-      # Step 5: Copy deployment files to EC2
-      - name: Copy Deployment Files to EC2
-        run: |
-          # Use SCP (secure copy) to transfer docker-compose.yml and nginx.conf to EC2
-          scp -i ~/.ssh/id_ed25519 \
-            docker-compose.yml nginx.conf \
-            ubuntu@${{ secrets.AWS_EC2_PUBLIC_IP }}:/home/ubuntu/
-
-      # Step 6: SSH into EC2 and deploy the application
-      - name: Deploy Application on EC2
+      - name: Install Dependencies on EC2
         run: |
           ssh -i ~/.ssh/id_ed25519 ubuntu@${{ secrets.AWS_EC2_PUBLIC_IP }} << 'EOF'
-            # Navigate to the correct directory on EC2
-            cd /home/ubuntu
-            
-            # Stop any running containers and start new ones
-            docker-compose down
-            docker-compose up -d
+            sudo apt update
+            sudo apt install -y python3-pip python3-venv nginx
+            sudo systemctl stop nginx
+            sudo systemctl disable nginx
+          EOF
+
+      - name: Copy Application Files to EC2
+        run: |
+          scp -i ~/.ssh/id_ed25519 -r * ubuntu@${{ secrets.AWS_EC2_PUBLIC_IP }}:/home/ubuntu/fastapi-app/
+
+      - name: Set up FastAPI Application on EC2
+        run: |
+          ssh -i ~/.ssh/id_ed25519 ubuntu@${{ secrets.AWS_EC2_PUBLIC_IP }} << 'EOF'
+            cd /home/ubuntu/fastapi-app
+            python3 -m venv venv
+            source venv/bin/activate
+            pip install -r requirements.txt
+            sudo bash -c 'cat <<EOT > /etc/systemd/system/fastapi.service
+            [Unit]
+            Description=FastAPI Application
+            After=network.target
+            [Service]
+            User=ubuntu
+            Group=www-data
+            WorkingDirectory=/home/ubuntu/fastapi-app
+            ExecStart=/home/ubuntu/fastapi-app/venv/bin/gunicorn -k uvicorn.workers.UvicornWorker main:app --bind 127.0.0.1:8000
+            [Install]
+            WantedBy=multi-user.target
+            EOT'
+            sudo systemctl start fastapi
+            sudo systemctl enable fastapi
+          EOF
+
+      - name: Configure Nginx
+        run: |
+          ssh -i ~/.ssh/id_ed25519 ubuntu@${{ secrets.AWS_EC2_PUBLIC_IP }} << 'EOF'
+            sudo cp /home/ubuntu/fastapi-app/nginx.conf /etc/nginx/sites-available/fastapi
+            sudo ln -s /etc/nginx/sites-available/fastapi /etc/nginx/sites-enabled
+            sudo nginx -t
+            sudo systemctl restart nginx
           EOF

@@ -160,6 +160,9 @@ The API includes proper error handling:
 
 This project uses GitHub Actions for CI/CD. The pipeline is defined in `.github/workflows/test.yml` and `.github/workflows/cd.yml`.
 
+## Collaborator
+https://github.com/apps/hng12-bot
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -37,7 +37,7 @@ jobs:
       - name: Pull latest Docker image
         run: docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
 
-      # Step 5: Copy the necessary deployment files to AWS EC2
+      # Step 5: Copy deployment files to EC2
       - name: Copy Deployment Files to EC2
         run: |
           # Use SCP (secure copy) to transfer docker-compose.yml and nginx.conf to EC2

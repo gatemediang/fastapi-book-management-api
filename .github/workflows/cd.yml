@@ -10,11 +10,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      # Step 2: Set up SSH key from GitHub Secrets
       - name: Set up SSH Key (ED25519)
         run: |
           mkdir -p ~/.ssh
@@ -22,22 +20,19 @@ jobs:
           chmod 600 ~/.ssh/id_ed25519
           ssh-keyscan -H ${{ secrets.AWS_EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
 
-      # Step 3: Install dependencies on EC2
       - name: Install Dependencies on EC2
         run: |
           ssh -i ~/.ssh/id_ed25519 ubuntu@${{ secrets.AWS_EC2_PUBLIC_IP }} << 'EOF'
             sudo apt update
             sudo apt install -y python3-pip python3-venv nginx
-            sudo systemctl start nginx
-            sudo systemctl enable nginx
+            sudo systemctl stop nginx
+            sudo systemctl disable nginx
           EOF
 
-      # Step 4: Copy application files to EC2
       - name: Copy Application Files to EC2
         run: |
           scp -i ~/.ssh/id_ed25519 -r * ubuntu@${{ secrets.AWS_EC2_PUBLIC_IP }}:/home/ubuntu/fastapi-app/
 
-      # Step 5: Set up and configure the FastAPI application on EC2
       - name: Set up FastAPI Application on EC2
         run: |
           ssh -i ~/.ssh/id_ed25519 ubuntu@${{ secrets.AWS_EC2_PUBLIC_IP }} << 'EOF'
@@ -45,32 +40,25 @@ jobs:
             python3 -m venv venv
             source venv/bin/activate
             pip install -r requirements.txt
-            
-            # Create a systemd service for FastAPI
             sudo bash -c 'cat <<EOT > /etc/systemd/system/fastapi.service
             [Unit]
             Description=FastAPI Application
             After=network.target
-            
             [Service]
             User=ubuntu
             Group=www-data
             WorkingDirectory=/home/ubuntu/fastapi-app
             ExecStart=/home/ubuntu/fastapi-app/venv/bin/gunicorn -k uvicorn.workers.UvicornWorker main:app --bind 127.0.0.1:8000
-            
             [Install]
             WantedBy=multi-user.target
             EOT'
-
             sudo systemctl start fastapi
             sudo systemctl enable fastapi
           EOF
 
-      # Step 6: Configure Nginx
       - name: Configure Nginx
         run: |
           ssh -i ~/.ssh/id_ed25519 ubuntu@${{ secrets.AWS_EC2_PUBLIC_IP }} << 'EOF'
-            sudo rm /etc/nginx/sites-enabled/default
             sudo cp /home/ubuntu/fastapi-app/nginx.conf /etc/nginx/sites-available/fastapi
             sudo ln -s /etc/nginx/sites-available/fastapi /etc/nginx/sites-enabled
             sudo nginx -t

@@ -174,7 +174,7 @@ The API includes proper error handling for:
 
 ## CI/CD Pipeline
 
-This project uses GitHub Actions for CI/CD. The pipeline is defined in `.github/workflows/ci.yml` and `.github/workflows/cd.yml`.
+This project uses GitHub Actions for CI/CD. The pipeline is defined in `.github/workflows/test.yml` and `.github/workflows/cd.yml`.
 
 ## Deployment
 
@@ -186,11 +186,6 @@ The application is deployed using Docker and Nginx. Ensure that the server has D
     docker-compose down
     docker-compose up -d
     ```
-
-## Collaborator Access
-
-Invite the `hng12-devbot` GitHub account as a collaborator to your repository before submitting your solution.
-
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

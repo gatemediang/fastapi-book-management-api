@@ -35,7 +35,7 @@ jobs:
 
       # Step 4: Pull the latest Docker image
       - name: Pull latest Docker image
-        run: docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
+        run: docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi-app
 
       # Step 5: Copy deployment files to EC2
       - name: Copy Deployment Files to EC2

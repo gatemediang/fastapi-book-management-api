@@ -10,32 +10,49 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout Repository
         uses: actions/checkout@v3
 
-      - name: Set up SSH Key
+      # Step 2: Set up SSH key from GitHub Secrets
+      - name: Set up SSH Key (ED25519)
         run: |
+          # Create .ssh directory if it doesn't exist
           mkdir -p ~/.ssh
-          echo "${{ secrets.AWS_SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
+          
+          # Store the private key from GitHub Secrets as a file in ~/.ssh
+          echo "${{ secrets.AWS_SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          
+          # Change permissions to ensure the private key is secure
+          chmod 600 ~/.ssh/id_ed25519
+          
+          # Add the EC2 instance to known_hosts for SSH fingerprint verification
           ssh-keyscan -H ${{ secrets.AWS_EC2_PUBLIC_IP }} >> ~/.ssh/known_hosts
 
-      - name: Login to Docker Hub
+      # Step 3: Log in to Docker Hub
+      - name: Log in to Docker Hub
         run: echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
 
+      # Step 4: Pull the latest Docker image
       - name: Pull latest Docker image
         run: docker pull ${{ secrets.DOCKER_USERNAME }}/fastapi-app:latest
 
-      - name: Copy Deployment Files to AWS EC2
+      # Step 5: Copy the necessary deployment files to AWS EC2
+      - name: Copy Deployment Files to EC2
         run: |
-          scp -i ~/.ssh/id_rsa \
+          # Use SCP (secure copy) to transfer docker-compose.yml and nginx.conf to EC2
+          scp -i ~/.ssh/id_ed25519 \
             docker-compose.yml nginx.conf \
             ubuntu@${{ secrets.AWS_EC2_PUBLIC_IP }}:/home/ubuntu/
 
-      - name: Deploy Application on AWS EC2
+      # Step 6: SSH into EC2 and deploy the application
+      - name: Deploy Application on EC2
         run: |
-          ssh -i ~/.ssh/id_rsa ubuntu@${{ secrets.AWS_EC2_PUBLIC_IP }} << 'EOF'
+          ssh -i ~/.ssh/id_ed25519 ubuntu@${{ secrets.AWS_EC2_PUBLIC_IP }} << 'EOF'
+            # Navigate to the correct directory on EC2
             cd /home/ubuntu
+            
+            # Stop any running containers and start new ones
             docker-compose down
             docker-compose up -d
           EOF

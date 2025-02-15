@@ -160,6 +160,9 @@ The API includes proper error handling:
 
 This project uses GitHub Actions for CI/CD. The pipeline is defined in `.github/workflows/test.yml` and `.github/workflows/cd.yml`.
 
+## Deploy on Ubuntu Ec2 Instance with Nginx
+ - API Endpoint: http://13.60.81.4/
+ - Swagger UI: http://13.60.81.4:8000/docs
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE)

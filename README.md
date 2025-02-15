@@ -163,6 +163,9 @@ This project uses GitHub Actions for CI/CD. The pipeline is defined in `.github/
 ## Deploy on Ubuntu Ec2 Instance with Nginx
  - API Endpoint: http://13.60.81.4/
  - Swagger UI: http://13.60.81.4:8000/docs
+
+## Collaborator
+ - https://github.com/hngprojects
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE)

@@ -51,8 +51,8 @@ fastapi-book-project/
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/hng12-devbotops/fastapi-book-project.git
-cd fastapi-book-project
+git clone https://github.com/gatemediang/fastapi-book-management-api.git
+cd fastapi-book-api
 ```
 
 2. Create a virtual environment:
@@ -82,7 +82,7 @@ uvicorn main:app
 - ReDoc: http://localhost:8000/redoc
 
 ## API Endpoints
-
+http://13.60.81.4/
 ### Books
 
 - `GET /api/v1/books/` - Get all books
@@ -160,8 +160,9 @@ The API includes proper error handling:
 
 This project uses GitHub Actions for CI/CD. The pipeline is defined in `.github/workflows/test.yml` and `.github/workflows/cd.yml`.
 
-
-    ```
+## Deploy on Ubuntu Ec2 Instance with Nginx
+ - API Endpoint: http://13.60.81.4/
+ - Swagger UI: http://13.60.81.4:8000/docs
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE)
